@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+ xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+ xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+ targetNamespace="https://testbed.local/wp1" id="Definitions_reference_bpic2019">
+ <bpmn:message id="confirmation" name="confirmation_reference_bpic2019"><bpmn:extensionElements><zeebe:subscription correlationKey="= correlationKey"/></bpmn:extensionElements></bpmn:message>
+ <bpmn:error id="external_error" errorCode="EXTERNAL_ERROR"/>
+ <bpmn:process id="testbed_bpic2019_reference_bpic2019" name="Purchase-to-Pay" isExecutable="true">
+ <bpmn:startEvent id="start"/><bpmn:subProcess id="work" name="Operational process">
+ <bpmn:startEvent id="inner_start"/>
+
+<bpmn:serviceTask id="validate" name="Validate purchase item"><bpmn:extensionElements><zeebe:taskDefinition type="reference_bpic2019.validate" retries="3"/></bpmn:extensionElements></bpmn:serviceTask>
+<bpmn:serviceTask id="register" name="Create Purchase Order Item"><bpmn:extensionElements><zeebe:taskDefinition type="reference_bpic2019.register" retries="3"/></bpmn:extensionElements></bpmn:serviceTask>
+<bpmn:serviceTask id="reserve" name="Record Goods Receipt"><bpmn:extensionElements><zeebe:taskDefinition type="reference_bpic2019.reserve" retries="3"/></bpmn:extensionElements></bpmn:serviceTask>
+<bpmn:serviceTask id="invoice" name="Record Invoice Receipt"><bpmn:extensionElements><zeebe:taskDefinition type="reference_bpic2019.invoice" retries="3"/></bpmn:extensionElements></bpmn:serviceTask>
+<bpmn:serviceTask id="match" name="Match purchase documents"><bpmn:extensionElements><zeebe:taskDefinition type="reference_bpic2019.match" retries="3"/></bpmn:extensionElements></bpmn:serviceTask>
+<bpmn:serviceTask id="compliance" name="Purchasing compliance check"><bpmn:extensionElements><zeebe:taskDefinition type="reference_bpic2019.compliance" retries="3"/></bpmn:extensionElements></bpmn:serviceTask>
+<bpmn:serviceTask id="payment" name="Clear Invoice"><bpmn:extensionElements><zeebe:taskDefinition type="reference_bpic2019.payment" retries="3"/></bpmn:extensionElements></bpmn:serviceTask>
+<bpmn:serviceTask id="dispatch" name="Notify supplier"><bpmn:extensionElements><zeebe:taskDefinition type="reference_bpic2019.dispatch" retries="3"/></bpmn:extensionElements></bpmn:serviceTask>
+<bpmn:serviceTask id="archive" name="Archive purchasing documents"><bpmn:extensionElements><zeebe:taskDefinition type="reference_bpic2019.archive" retries="3"/></bpmn:extensionElements></bpmn:serviceTask>
+<bpmn:serviceTask id="finalize" name="Close purchase item"><bpmn:extensionElements><zeebe:taskDefinition type="reference_bpic2019.finalize" retries="3"/></bpmn:extensionElements></bpmn:serviceTask>
+<bpmn:businessRuleTask id="decision" name="Review decision"><bpmn:extensionElements><zeebe:calledDecision decisionId="review_reference_bpic2019" resultVariable="reviewRequired"/></bpmn:extensionElements></bpmn:businessRuleTask>
+<bpmn:exclusiveGateway id="choice" default="skip_review"/>
+<bpmn:exclusiveGateway id="variant_route"/>
+<bpmn:exclusiveGateway id="receipt_route"/>
+<bpmn:exclusiveGateway id="invoice_route"/>
+<bpmn:userTask id="review" name="Purchasing human approval"><bpmn:extensionElements><zeebe:userTask/><zeebe:assignmentDefinition candidateGroups="operations"/></bpmn:extensionElements></bpmn:userTask>
+<bpmn:userTask id="escalation" name="Purchasing operations escalation"><bpmn:extensionElements><zeebe:userTask/><zeebe:assignmentDefinition candidateGroups="operations"/></bpmn:extensionElements></bpmn:userTask>
+<bpmn:boundaryEvent id="validate_error" attachedToRef="validate"><bpmn:errorEventDefinition errorRef="external_error"/></bpmn:boundaryEvent>
+<bpmn:boundaryEvent id="match_error" attachedToRef="match"><bpmn:errorEventDefinition errorRef="external_error"/></bpmn:boundaryEvent>
+<bpmn:boundaryEvent id="reserve_error" attachedToRef="reserve"><bpmn:errorEventDefinition errorRef="external_error"/></bpmn:boundaryEvent>
+<bpmn:boundaryEvent id="compliance_error" attachedToRef="compliance"><bpmn:errorEventDefinition errorRef="external_error"/></bpmn:boundaryEvent>
+<bpmn:boundaryEvent id="payment_error" attachedToRef="payment"><bpmn:errorEventDefinition errorRef="external_error"/></bpmn:boundaryEvent>
+<bpmn:exclusiveGateway id="resume"/>
+<bpmn:intermediateCatchEvent id="confirmation_wait" name="External confirmation"><bpmn:messageEventDefinition messageRef="confirmation"/></bpmn:intermediateCatchEvent><bpmn:endEvent id="inner_end"/>
+<bpmn:sequenceFlow id="f0" sourceRef="inner_start" targetRef="validate"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f1" sourceRef="validate" targetRef="register"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f2" sourceRef="register" targetRef="decision"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f3" sourceRef="decision" targetRef="choice"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f4" sourceRef="choice" targetRef="review"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">= reviewRequired</bpmn:conditionExpression></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="skip_review" sourceRef="choice" targetRef="variant_route"/>
+<bpmn:sequenceFlow id="f6" sourceRef="review" targetRef="variant_route"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f7" sourceRef="variant_route" targetRef="invoice"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">= matchingMode = "3way-before" or matchingMode = "2way"</bpmn:conditionExpression></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f8" sourceRef="variant_route" targetRef="reserve"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">= matchingMode = "3way-after" or matchingMode = "consignment"</bpmn:conditionExpression></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f9" sourceRef="reserve" targetRef="receipt_route"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f10" sourceRef="receipt_route" targetRef="invoice"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">= matchingMode = "3way-after"</bpmn:conditionExpression></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f11" sourceRef="receipt_route" targetRef="match"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">= matchingMode != "3way-after"</bpmn:conditionExpression></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f12" sourceRef="invoice" targetRef="invoice_route"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f13" sourceRef="invoice_route" targetRef="reserve"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">= matchingMode = "3way-before"</bpmn:conditionExpression></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f14" sourceRef="invoice_route" targetRef="match"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">= matchingMode != "3way-before"</bpmn:conditionExpression></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f15" sourceRef="match" targetRef="compliance"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f16" sourceRef="compliance" targetRef="payment"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f17" sourceRef="payment" targetRef="dispatch"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f18" sourceRef="validate_error" targetRef="escalation"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f19" sourceRef="resume" targetRef="validate"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">= resumeStep = "validate"</bpmn:conditionExpression></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f20" sourceRef="match_error" targetRef="escalation"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f21" sourceRef="resume" targetRef="match"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">= resumeStep = "match"</bpmn:conditionExpression></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f22" sourceRef="reserve_error" targetRef="escalation"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f23" sourceRef="resume" targetRef="reserve"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">= resumeStep = "reserve"</bpmn:conditionExpression></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f24" sourceRef="compliance_error" targetRef="escalation"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f25" sourceRef="resume" targetRef="compliance"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">= resumeStep = "compliance"</bpmn:conditionExpression></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f26" sourceRef="payment_error" targetRef="escalation"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f27" sourceRef="resume" targetRef="payment"><bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">= resumeStep = "payment"</bpmn:conditionExpression></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f28" sourceRef="escalation" targetRef="resume"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f29" sourceRef="dispatch" targetRef="confirmation_wait"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f30" sourceRef="confirmation_wait" targetRef="archive"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f31" sourceRef="archive" targetRef="finalize"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f32" sourceRef="finalize" targetRef="inner_end"></bpmn:sequenceFlow>
+</bpmn:subProcess>
+<bpmn:boundaryEvent id="sla_timer" attachedToRef="work" cancelActivity="false"><bpmn:timerEventDefinition><bpmn:timeDuration>= slaTimer</bpmn:timeDuration></bpmn:timerEventDefinition></bpmn:boundaryEvent>
+
+<bpmn:serviceTask id="sla" name="SLA warning monitor"><bpmn:extensionElements><zeebe:taskDefinition type="reference_bpic2019.sla"/></bpmn:extensionElements></bpmn:serviceTask><bpmn:endEvent id="sla_end"/><bpmn:endEvent id="end"/>
+<bpmn:sequenceFlow id="f33" sourceRef="start" targetRef="work"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f34" sourceRef="work" targetRef="end"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f35" sourceRef="sla_timer" targetRef="sla"></bpmn:sequenceFlow>
+<bpmn:sequenceFlow id="f36" sourceRef="sla" targetRef="sla_end"></bpmn:sequenceFlow>
+</bpmn:process>
+<bpmndi:BPMNDiagram id="diagram"><bpmndi:BPMNPlane id="plane" bpmnElement="testbed_bpic2019_reference_bpic2019">
+<bpmndi:BPMNShape id="shape_start" bpmnElement="start"><dc:Bounds x="30" y="180" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_work" bpmnElement="work" isExpanded="true"><dc:Bounds x="100" y="60" width="2100" height="400"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_end" bpmnElement="end"><dc:Bounds x="2250" y="180" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_sla_timer" bpmnElement="sla_timer"><dc:Bounds x="140" y="442" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_sla" bpmnElement="sla"><dc:Bounds x="220" y="500" width="120" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_sla_end" bpmnElement="sla_end"><dc:Bounds x="390" y="510" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_inner_start" bpmnElement="inner_start"><dc:Bounds x="140" y="130" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_validate" bpmnElement="validate"><dc:Bounds x="300" y="120" width="110" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_register" bpmnElement="register"><dc:Bounds x="460" y="120" width="110" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_reserve" bpmnElement="reserve"><dc:Bounds x="620" y="120" width="110" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_invoice" bpmnElement="invoice"><dc:Bounds x="780" y="120" width="110" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_match" bpmnElement="match"><dc:Bounds x="940" y="120" width="110" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_compliance" bpmnElement="compliance"><dc:Bounds x="1100" y="120" width="110" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_payment" bpmnElement="payment"><dc:Bounds x="1260" y="120" width="110" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_dispatch" bpmnElement="dispatch"><dc:Bounds x="1420" y="120" width="110" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_archive" bpmnElement="archive"><dc:Bounds x="1580" y="120" width="110" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_finalize" bpmnElement="finalize"><dc:Bounds x="1740" y="120" width="110" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_decision" bpmnElement="decision"><dc:Bounds x="1900" y="120" width="110" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_choice" bpmnElement="choice"><dc:Bounds x="140" y="310" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_variant_route" bpmnElement="variant_route"><dc:Bounds x="300" y="310" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_receipt_route" bpmnElement="receipt_route"><dc:Bounds x="460" y="310" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_invoice_route" bpmnElement="invoice_route"><dc:Bounds x="620" y="310" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_review" bpmnElement="review"><dc:Bounds x="780" y="300" width="110" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_escalation" bpmnElement="escalation"><dc:Bounds x="940" y="300" width="110" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_validate_error" bpmnElement="validate_error"><dc:Bounds x="1100" y="310" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_match_error" bpmnElement="match_error"><dc:Bounds x="1260" y="310" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_reserve_error" bpmnElement="reserve_error"><dc:Bounds x="1420" y="310" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_compliance_error" bpmnElement="compliance_error"><dc:Bounds x="1580" y="310" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_payment_error" bpmnElement="payment_error"><dc:Bounds x="1740" y="310" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_resume" bpmnElement="resume"><dc:Bounds x="1900" y="310" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_confirmation_wait" bpmnElement="confirmation_wait"><dc:Bounds x="140" y="490" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="shape_inner_end" bpmnElement="inner_end"><dc:Bounds x="300" y="490" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNEdge id="edge_f0" bpmnElement="f0"><di:waypoint x="176" y="148.0"/><di:waypoint x="300" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f1" bpmnElement="f1"><di:waypoint x="410" y="150.0"/><di:waypoint x="460" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f2" bpmnElement="f2"><di:waypoint x="570" y="150.0"/><di:waypoint x="1900" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f3" bpmnElement="f3"><di:waypoint x="2010" y="150.0"/><di:waypoint x="140" y="328.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f4" bpmnElement="f4"><di:waypoint x="176" y="328.0"/><di:waypoint x="780" y="330.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_skip_review" bpmnElement="skip_review"><di:waypoint x="176" y="328.0"/><di:waypoint x="300" y="328.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f6" bpmnElement="f6"><di:waypoint x="890" y="330.0"/><di:waypoint x="300" y="328.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f7" bpmnElement="f7"><di:waypoint x="336" y="328.0"/><di:waypoint x="780" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f8" bpmnElement="f8"><di:waypoint x="336" y="328.0"/><di:waypoint x="620" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f9" bpmnElement="f9"><di:waypoint x="730" y="150.0"/><di:waypoint x="460" y="328.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f10" bpmnElement="f10"><di:waypoint x="496" y="328.0"/><di:waypoint x="780" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f11" bpmnElement="f11"><di:waypoint x="496" y="328.0"/><di:waypoint x="940" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f12" bpmnElement="f12"><di:waypoint x="890" y="150.0"/><di:waypoint x="620" y="328.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f13" bpmnElement="f13"><di:waypoint x="656" y="328.0"/><di:waypoint x="620" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f14" bpmnElement="f14"><di:waypoint x="656" y="328.0"/><di:waypoint x="940" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f15" bpmnElement="f15"><di:waypoint x="1050" y="150.0"/><di:waypoint x="1100" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f16" bpmnElement="f16"><di:waypoint x="1210" y="150.0"/><di:waypoint x="1260" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f17" bpmnElement="f17"><di:waypoint x="1370" y="150.0"/><di:waypoint x="1420" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f18" bpmnElement="f18"><di:waypoint x="1136" y="328.0"/><di:waypoint x="940" y="330.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f19" bpmnElement="f19"><di:waypoint x="1936" y="328.0"/><di:waypoint x="300" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f20" bpmnElement="f20"><di:waypoint x="1296" y="328.0"/><di:waypoint x="940" y="330.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f21" bpmnElement="f21"><di:waypoint x="1936" y="328.0"/><di:waypoint x="940" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f22" bpmnElement="f22"><di:waypoint x="1456" y="328.0"/><di:waypoint x="940" y="330.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f23" bpmnElement="f23"><di:waypoint x="1936" y="328.0"/><di:waypoint x="620" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f24" bpmnElement="f24"><di:waypoint x="1616" y="328.0"/><di:waypoint x="940" y="330.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f25" bpmnElement="f25"><di:waypoint x="1936" y="328.0"/><di:waypoint x="1100" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f26" bpmnElement="f26"><di:waypoint x="1776" y="328.0"/><di:waypoint x="940" y="330.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f27" bpmnElement="f27"><di:waypoint x="1936" y="328.0"/><di:waypoint x="1260" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f28" bpmnElement="f28"><di:waypoint x="1050" y="330.0"/><di:waypoint x="1900" y="328.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f29" bpmnElement="f29"><di:waypoint x="1530" y="150.0"/><di:waypoint x="140" y="508.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f30" bpmnElement="f30"><di:waypoint x="176" y="508.0"/><di:waypoint x="1580" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f31" bpmnElement="f31"><di:waypoint x="1690" y="150.0"/><di:waypoint x="1740" y="150.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f32" bpmnElement="f32"><di:waypoint x="1850" y="150.0"/><di:waypoint x="300" y="508.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f33" bpmnElement="f33"><di:waypoint x="66" y="198.0"/><di:waypoint x="100" y="260.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f34" bpmnElement="f34"><di:waypoint x="2200" y="260.0"/><di:waypoint x="2250" y="198.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f35" bpmnElement="f35"><di:waypoint x="176" y="460.0"/><di:waypoint x="220" y="530.0"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="edge_f36" bpmnElement="f36"><di:waypoint x="340" y="530.0"/><di:waypoint x="390" y="528.0"/></bpmndi:BPMNEdge>
+</bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>

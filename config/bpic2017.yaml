@@ -1,0 +1,24 @@
+dataset: bpic2017
+file: datasets/bpi_challenge_2017.csv
+process: Loan application
+amount_attribute: case:RequestedAmount
+activities:
+  validate: Validate application
+  register: A_Create Application
+  reserve: W_Validate application
+  invoice: O_Create Offer
+  match: Assess application
+  compliance: Loan compliance check
+  payment: A_Pending
+  dispatch: O_Sent (mail and online)
+  archive: Archive application
+  finalize: Close application
+  review: W_Assess potential fraud
+  escalation: Loan operations escalation
+disruption_targets:
+  service_outage: payment
+  timeout: match
+  missing_data: validate
+  resource_shortage: review
+  sla_risk: reserve
+  rule_change: compliance

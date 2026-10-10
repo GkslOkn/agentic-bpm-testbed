@@ -1,0 +1,22 @@
+dataset: synthetic
+process: Order-to-cash
+activities:
+  validate: Validate order
+  register: Register customer order
+  reserve: Reserve stock
+  invoice: Invoice
+  match: Credit check
+  compliance: Compliance check
+  payment: Payment
+  dispatch: Ship
+  archive: Archive order
+  finalize: Close order
+  review: Manual review
+  escalation: Operations escalation
+disruption_targets:
+  service_outage: payment
+  timeout: match
+  missing_data: validate
+  resource_shortage: review
+  sla_risk: reserve
+  rule_change: compliance

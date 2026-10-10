@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="dmn_reference_bpic2019" name="Experiment review policy" namespace="https://testbed.local/wp1">
+<decision id="review_reference_bpic2019" name="Review policy"><decisionTable id="table" hitPolicy="FIRST">
+<input id="input"><inputExpression id="expr" typeRef="boolean"><text>forceReview or amount &gt; 8000</text></inputExpression></input>
+<output id="output" name="required" typeRef="boolean"/>
+<rule id="yes"><inputEntry id="i1"><text>true</text></inputEntry><outputEntry id="o1"><text>true</text></outputEntry></rule>
+<rule id="no"><inputEntry id="i2"><text>-</text></inputEntry><outputEntry id="o2"><text>false</text></outputEntry></rule>
+</decisionTable></decision></definitions>

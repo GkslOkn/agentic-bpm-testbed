@@ -1,0 +1,25 @@
+dataset: bpic2019
+file: datasets/bpi_challenge_2019.xes
+process: Purchase-to-Pay
+amount_attribute: Cumulative net worth (EUR)
+variant_attribute: Item Category
+activities:
+  validate: Validate purchase item
+  register: Create Purchase Order Item
+  reserve: Record Goods Receipt
+  invoice: Record Invoice Receipt
+  match: Match purchase documents
+  compliance: Purchasing compliance check
+  payment: Clear Invoice
+  dispatch: Notify supplier
+  archive: Archive purchasing documents
+  finalize: Close purchase item
+  review: Purchasing human approval
+  escalation: Purchasing operations escalation
+disruption_targets:
+  service_outage: payment
+  timeout: match
+  missing_data: validate
+  resource_shortage: review
+  sla_risk: reserve
+  rule_change: compliance

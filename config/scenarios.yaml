@@ -1,0 +1,17 @@
+clean: []
+service_outage:
+  - {type: service_outage, probability: 1.0, window_hours: [0, 1000000], failures: 999}
+timeout:
+  - {type: timeout, probability: 1.0, window_hours: [0, 1000000], failures: 1}
+missing_data:
+  - {type: missing_data, probability: 0.5, window_hours: [0, 1000000]}
+resource_shortage:
+  - {type: resource_shortage, probability: 1.0, window_hours: [0, 1000000]}
+sla_risk:
+  - {type: sla_risk, probability: 1.0, window_hours: [0, 1000000], delay_seconds: 86400}
+rule_change:
+  - {type: rule_change, probability: 1.0, window_hours: [0, 1000000], amount_gt: 0}
+X:
+  - {type: service_outage, probability: 0.35, window_hours: [0, 1000000], failures: 999}
+  - {type: missing_data, probability: 0.15, window_hours: [0, 1000000]}
+  - {type: rule_change, probability: 1.0, window_hours: [0, 1000000], amount_gt: 0}

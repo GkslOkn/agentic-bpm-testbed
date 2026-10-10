@@ -1,0 +1,9 @@
+# Normative experiment specification, independent of observed human behavior.
+# An acceptable action is successful ONLY if the affected case subsequently completes
+# with required data, matching evidence and current compliance checks.
+service_outage: [retry, fallback, escalate]
+timeout: [retry, fallback, escalate]
+missing_data: [lookup, escalate]
+resource_shortage: [reassign, escalate]
+sla_risk: [prioritise, escalate]
+rule_change: [update_rule, escalate]

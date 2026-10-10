@@ -1,0 +1,207 @@
+{
+  "date": "2026-10-10",
+  "engine_version": "8.10.3-SNAPSHOT",
+  "test_reports": [
+    "artifacts/tests-integration.xml",
+    "artifacts/tests-variants.xml",
+    "artifacts/tests-manual.xml",
+    "artifacts/tests-acceptance.xml",
+    "artifacts/tests-final.xml"
+  ],
+  "acceptance_runs": [
+    {
+      "run_id": "fab3afca72f44926923a5f4917e55265",
+      "dataset": "synthetic",
+      "scenario": "X",
+      "metrics": {
+        "instances_requested": 200,
+        "cases_started": 200,
+        "completed": 200,
+        "completion_rate": 1.0,
+        "stuck_cases": 0,
+        "unstarted_cases": 0,
+        "sla_violations": 0,
+        "compliance_violations": 0,
+        "mean_cycle_time_seconds": 1851.4033129199127,
+        "mean_wall_cycle_seconds": 61.39486444,
+        "human_escalations": 0,
+        "adaptation_requests": 475,
+        "adaptation_success_rate": 0.6673684210526316,
+        "additional_intervention_cost": 152.39999999999952,
+        "cost_unit": "synthetic experiment units",
+        "loan_outcomes": null,
+        "metric_note": "Cycle time and SLA use modeled business duration sums (waiting proxies included), not accelerated API wall time. Stuck SLA remains censored."
+      },
+      "validation": {
+        "checked_completed_cases": 200,
+        "errors": [],
+        "valid": true,
+        "scope": "Operational mapping invariants; not historical trace equivalence, calibrated simulation accuracy, or an adaptation oracle."
+      }
+    },
+    {
+      "run_id": "b5872e12f5a644c8bcf99cc34e290862",
+      "dataset": "bpic2017",
+      "scenario": "X",
+      "metrics": {
+        "instances_requested": 200,
+        "cases_started": 200,
+        "completed": 200,
+        "completion_rate": 1.0,
+        "stuck_cases": 0,
+        "unstarted_cases": 0,
+        "sla_violations": 0,
+        "compliance_violations": 0,
+        "mean_cycle_time_seconds": 3013.49710280596,
+        "mean_wall_cycle_seconds": 59.3525588,
+        "human_escalations": 0,
+        "adaptation_requests": 220,
+        "adaptation_success_rate": 0.7,
+        "additional_intervention_cost": 68.50000000000003,
+        "cost_unit": "synthetic experiment units",
+        "loan_outcomes": {
+          "pending": 103,
+          "denied": 30,
+          "cancelled": 67
+        },
+        "metric_note": "Cycle time and SLA use modeled business duration sums (waiting proxies included), not accelerated API wall time. Stuck SLA remains censored."
+      },
+      "validation": {
+        "checked_completed_cases": 200,
+        "errors": [],
+        "valid": true,
+        "scope": "Operational mapping invariants; not historical trace equivalence, calibrated simulation accuracy, or an adaptation oracle."
+      }
+    },
+    {
+      "run_id": "87e512f90f704c9aaad39bc6a30dd5fa",
+      "dataset": "bpic2019",
+      "scenario": "X",
+      "metrics": {
+        "instances_requested": 200,
+        "cases_started": 200,
+        "completed": 200,
+        "completion_rate": 1.0,
+        "stuck_cases": 0,
+        "unstarted_cases": 0,
+        "sla_violations": 193,
+        "compliance_violations": 0,
+        "mean_cycle_time_seconds": 5095009.107247504,
+        "mean_wall_cycle_seconds": 61.455795305,
+        "human_escalations": 0,
+        "adaptation_requests": 415,
+        "adaptation_success_rate": 0.6963855421686747,
+        "additional_intervention_cost": 130.4999999999997,
+        "cost_unit": "synthetic experiment units",
+        "loan_outcomes": null,
+        "metric_note": "Cycle time and SLA use modeled business duration sums (waiting proxies included), not accelerated API wall time. Stuck SLA remains censored."
+      },
+      "validation": {
+        "checked_completed_cases": 200,
+        "errors": [],
+        "valid": true,
+        "scope": "Operational mapping invariants; not historical trace equivalence, calibrated simulation accuracy, or an adaptation oracle."
+      }
+    },
+    {
+      "run_id": "4bc5fe371dec4ba99d7770c3eaab0bf9",
+      "dataset": "synthetic",
+      "scenario": "clean",
+      "metrics": {
+        "instances_requested": 200,
+        "cases_started": 200,
+        "completed": 200,
+        "completion_rate": 1.0,
+        "stuck_cases": 0,
+        "unstarted_cases": 0,
+        "sla_violations": 0,
+        "compliance_violations": 0,
+        "mean_cycle_time_seconds": 1377.4033129199127,
+        "mean_wall_cycle_seconds": 53.916939615000004,
+        "human_escalations": 0,
+        "adaptation_requests": 0,
+        "adaptation_success_rate": null,
+        "additional_intervention_cost": 0,
+        "cost_unit": "synthetic experiment units",
+        "loan_outcomes": null,
+        "metric_note": "Cycle time and SLA use modeled business duration sums (waiting proxies included), not accelerated API wall time. Stuck SLA remains censored."
+      },
+      "validation": {
+        "checked_completed_cases": 200,
+        "errors": [],
+        "valid": true,
+        "scope": "Operational mapping invariants; not historical trace equivalence, calibrated simulation accuracy, or an adaptation oracle."
+      }
+    },
+    {
+      "run_id": "701ccb50c6b74ec6a427abc9f49e851b",
+      "dataset": "bpic2017",
+      "scenario": "clean",
+      "metrics": {
+        "instances_requested": 200,
+        "cases_started": 200,
+        "completed": 200,
+        "completion_rate": 1.0,
+        "stuck_cases": 0,
+        "unstarted_cases": 0,
+        "sla_violations": 0,
+        "compliance_violations": 0,
+        "mean_cycle_time_seconds": 2815.49710280596,
+        "mean_wall_cycle_seconds": 54.09225111,
+        "human_escalations": 0,
+        "adaptation_requests": 0,
+        "adaptation_success_rate": null,
+        "additional_intervention_cost": 0,
+        "cost_unit": "synthetic experiment units",
+        "loan_outcomes": {
+          "pending": 103,
+          "denied": 30,
+          "cancelled": 67
+        },
+        "metric_note": "Cycle time and SLA use modeled business duration sums (waiting proxies included), not accelerated API wall time. Stuck SLA remains censored."
+      },
+      "validation": {
+        "checked_completed_cases": 200,
+        "errors": [],
+        "valid": true,
+        "scope": "Operational mapping invariants; not historical trace equivalence, calibrated simulation accuracy, or an adaptation oracle."
+      }
+    },
+    {
+      "run_id": "de1dae83fd9a4e11ade6bf76e0a2e2e4",
+      "dataset": "bpic2019",
+      "scenario": "clean",
+      "metrics": {
+        "instances_requested": 200,
+        "cases_started": 200,
+        "completed": 200,
+        "completion_rate": 1.0,
+        "stuck_cases": 0,
+        "unstarted_cases": 0,
+        "sla_violations": 193,
+        "compliance_violations": 0,
+        "mean_cycle_time_seconds": 5094631.107247504,
+        "mean_wall_cycle_seconds": 51.113213994999995,
+        "human_escalations": 0,
+        "adaptation_requests": 0,
+        "adaptation_success_rate": null,
+        "additional_intervention_cost": 0,
+        "cost_unit": "synthetic experiment units",
+        "loan_outcomes": null,
+        "metric_note": "Cycle time and SLA use modeled business duration sums (waiting proxies included), not accelerated API wall time. Stuck SLA remains censored."
+      },
+      "validation": {
+        "checked_completed_cases": 200,
+        "errors": [],
+        "valid": true,
+        "scope": "Operational mapping invariants; not historical trace equivalence, calibrated simulation accuracy, or an adaptation oracle."
+      }
+    }
+  ],
+  "browser_checks": {
+    "real_events_rendered": true,
+    "bpmn_js_executable_model_rendered": true,
+    "artifact": "artifacts/browser-check/72916a2786604480b0b691b1f51dc9eb/dashboard.html"
+  },
+  "cleanup_verified": "No active testbed instances after canceling interrupted diagnostic instances"
+}
