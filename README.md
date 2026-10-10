@@ -2,15 +2,43 @@
 
 Python workers execute real Camunda 8 jobs. FastAPI serves a dashboard based on the supplied prototype; BPMN execution happens in Camunda. Work Package 2 is excluded.
 
-From PowerShell in this directory, using the existing Python 3.12 virtual environment:
+## Start the project after closing the terminal or restarting Windows
+
+1. Open Docker Desktop and wait until its engine is ready.
+2. Open PowerShell in the project root (the directory containing this README). Use the existing Python 3.12 `.venv`.
+3. Start the existing Camunda stack:
+
+```powershell
+docker compose --project-directory camunda_8_docker -f camunda_8_docker/docker-compose.yaml -f camunda_8_docker/docker-compose.pinned.yaml up -d
+```
+
+4. Check that Camunda is ready:
 
 ```powershell
 .\.venv\Scripts\python.exe -m testbed doctor
-.\.venv\Scripts\python.exe -m testbed run --dataset bpic2019 --scenario X --seed 42 --instances 200
+```
+
+If the check fails while Camunda is starting, wait briefly and run it again. Once it succeeds, start the dashboard:
+
+```powershell
 .\.venv\Scripts\python.exe -m testbed serve
 ```
 
-Open **http://127.0.0.1:8000**. Operate and Tasklist are at http://localhost:8080/operate and http://localhost:8080/tasklist, with the existing local `demo` / `demo` account. PyCharm: select `.venv\Scripts\python.exe`, use a Python module run configuration with module `testbed`, parameters `serve`, and this repository as the working directory.
+5. Open **http://127.0.0.1:8000**. Keep the PowerShell window open while using the dashboard. Press **Ctrl+C** to stop the dashboard; Camunda continues running in Docker. Closing the Codex window does not replace this startup sequence: start the dashboard from your own terminal or PyCharm when you need it.
+
+Launch experiments from the dashboard, or open a second PowerShell window in the project root:
+
+```powershell
+.\.venv\Scripts\python.exe -m testbed run --dataset bpic2019 --scenario X --seed 42 --instances 200
+```
+
+Workers start automatically with each experiment; there is no separate worker startup command. Previous results remain in `artifacts/` and appear in the dashboard after restarting. Allow an active experiment to finish before stopping its terminal or restarting Windows.
+
+Operate and Tasklist are at http://localhost:8080/operate and http://localhost:8080/tasklist, with the existing local `demo` / `demo` account.
+
+### Run the dashboard from PyCharm
+
+Select `.venv\Scripts\python.exe` as the project interpreter. Create a Python run configuration using **Module name** `testbed`, **Parameters** `serve`, and the project root as the **Working directory**. Start Docker Desktop and Camunda first, then run this configuration and open http://127.0.0.1:8000.
 
 The existing Docker stack is reused. Its consolidated orchestration image contains Zeebe, Operate, and Tasklist, using H2 secondary storage. Exact installed images are pinned by digest in `camunda_8_docker/docker-compose.pinned.yaml`. To start the same stack when needed:
 
@@ -25,6 +53,21 @@ Dependencies are installed in the existing `.venv`; `requirements.lock.txt` reco
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements.lock.txt
 ```
+
+## Camunda and dataset sources
+
+The Camunda Docker Compose distribution is available from the official [Camunda distributions releases](https://github.com/camunda/camunda-distributions/releases). This project uses the existing local `camunda_8_docker/` setup and its pinned override; restarting does not require downloading or creating another stack.
+
+Dataset mirror links provided for this project:
+
+| Dataset | Source link | Required local file |
+|---|---|---|
+| BPIC 2019 (primary) | [BPI Challenge 2019 dataset on Kaggle](https://www.kaggle.com/datasets/aaminaalzeri/bpi-challenge-2019-dataset) | `datasets/bpi_challenge_2019.xes` (XES) |
+| BPIC 2017 (secondary) | [BPI challenge 2017 dataset on Kaggle](https://www.kaggle.com/datasets/waquarhaseeb/bpi-challenge-2017-dataset) | `datasets/bpi_challenge_2017.csv` (CSV) |
+
+Both datasets are already present locally; do not download them again for normal startup. For a fresh checkout, obtain the missing files separately and verify their format and schema against the dataset mapping. Renaming a CSV file to `.xes` does not convert it. The supplied BPIC 2017 CSV has no timestamps, so its timing parameters are explicitly synthetic.
+
+Original publisher records: [BPIC 2019, 4TU.ResearchData](https://doi.org/10.4121/uuid:d06aff4b-79f0-45e6-8ec8-e19730c248f1) and [BPIC 2017, 4TU.ResearchData](https://doi.org/10.4121/uuid:5f3067df-f10b-45da-b98b-86ae4c7a310b). See [methodology and dataset licenses](docs/METHODOLOGY.md) for attribution, verified publisher terms, and the supplied CSV's provenance limitations. Datasets are excluded from this repository by `.gitignore`.
 
 Other commands:
 
