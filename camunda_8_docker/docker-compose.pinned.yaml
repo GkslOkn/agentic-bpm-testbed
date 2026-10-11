@@ -1,0 +1,9 @@
+# Use with the EXISTING compose project, not as another stack.
+# docker compose -f docker-compose.yaml -f docker-compose.pinned.yaml up -d
+services:
+  camunda-data-init:
+    image: camunda/camunda@sha256:cb3408f10bfbac29be4d1f3b13955d2003c9f1a1c19becab329f818ade895cb7
+  orchestration:
+    image: camunda/camunda@sha256:cb3408f10bfbac29be4d1f3b13955d2003c9f1a1c19becab329f818ade895cb7
+  connectors:
+    image: camunda/connectors-bundle@sha256:9e7f1a389aa52c2a12394f8773dbbfe62fa03447a2a9730574ab10c805b6e1d8
